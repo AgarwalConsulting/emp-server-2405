@@ -10,14 +10,16 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 
-	empRepo "algogrit.com/emp_server/employees/repository"
+	"algogrit.com/emp_server/employees/repository"
+	"algogrit.com/emp_server/employees/service"
 	"algogrit.com/emp_server/entities"
 )
 
-var repo = empRepo.NewInMem()
+var repo = repository.NewInMem()
+var v1Svc = service.NewV1(repo)
 
 func EmployeesIndexHandler(w http.ResponseWriter, req *http.Request) {
-	employees, err := repo.ListAll()
+	employees, err := v1Svc.Index()
 
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -39,7 +41,7 @@ func EmployeeCreateHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	createdEmp, err := repo.Save(newEmp)
+	createdEmp, err := v1Svc.Create(newEmp)
 
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
