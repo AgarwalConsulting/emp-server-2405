@@ -1,16 +1,26 @@
 package repository
 
-import "algogrit.com/emp_server/entities"
+import (
+	"sync"
+
+	"algogrit.com/emp_server/entities"
+)
 
 type inmemRepo struct {
 	employees []entities.Employee
+	sync.RWMutex
 }
 
 func (repo *inmemRepo) ListAll() ([]entities.Employee, error) {
+	repo.RWMutex.RLock()
+	defer repo.RWMutex.RUnlock()
 	return repo.employees, nil
 }
 
 func (repo *inmemRepo) Save(newEmp entities.Employee) (*entities.Employee, error) {
+	repo.RWMutex.Lock()
+	defer repo.RWMutex.Unlock()
+
 	newEmp.ID = len(repo.employees) + 1
 
 	repo.employees = append(repo.employees, newEmp)
