@@ -10,26 +10,21 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 
+	empRepo "algogrit.com/emp_server/employee/repository"
 	"algogrit.com/emp_server/entities"
 )
 
-// type Address struct {
-// 	City string `json:"city"`
-// }
-
-// func (e Employee) MarshalJSON() ([]byte, error) {
-// 	jsonString := fmt.Sprintf(`{"id": %d, "name": "%s", "speciality": "%s"}`, e.ID, e.Name, e.Department)
-
-// 	return []byte(jsonString), nil
-// }
-
-var employees = []entities.Employee{
-	{1, "Gaurav", "LnD", 1001},
-	{2, "Shikhar", "Cloud", 10002},
-	{3, "Mark", "SRE", 2003},
-}
+var repo = empRepo.NewInMem()
 
 func EmployeesIndexHandler(w http.ResponseWriter, req *http.Request) {
+	employees, err := repo.ListAll()
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintln(w, err)
+		return
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(employees)
 }
@@ -44,11 +39,16 @@ func EmployeeCreateHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	newEmp.ID = len(employees) + 1
-	employees = append(employees, newEmp)
+	createdEmp, err := repo.Save(newEmp)
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintln(w, err)
+		return
+	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(newEmp)
+	json.NewEncoder(w).Encode(createdEmp)
 }
 
 // func EmployeesHandler(w http.ResponseWriter, req *http.Request) {
