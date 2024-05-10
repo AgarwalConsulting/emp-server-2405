@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 
@@ -92,6 +93,7 @@ func main() {
 	r.HandleFunc("/employees", EmployeesIndexHandler).Methods("GET")
 	r.HandleFunc("/employees", EmployeeCreateHandler).Methods("POST")
 
+	log.Println("Starting server on port: 8000...")
 	// http.ListenAndServe("localhost:8000", LoggingMiddleware(r))
-	http.ListenAndServe("localhost:8000", handlers.LoggingHandler(os.Stdout, r))
+	http.ListenAndServe(":8000", handlers.LoggingHandler(os.Stdout, r))
 }
