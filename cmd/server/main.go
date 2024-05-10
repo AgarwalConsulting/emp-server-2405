@@ -9,19 +9,13 @@ import (
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+
+	"algogrit.com/emp_server/entities"
 )
 
 // type Address struct {
 // 	City string `json:"city"`
 // }
-
-type Employee struct {
-	ID         int    `json:"id"`
-	Name       string `json:"name"`
-	Department string `json:"speciality"`
-	ProjectID  int    `json:"-"`
-	// Address Address `json:"address"`
-}
 
 // func (e Employee) MarshalJSON() ([]byte, error) {
 // 	jsonString := fmt.Sprintf(`{"id": %d, "name": "%s", "speciality": "%s"}`, e.ID, e.Name, e.Department)
@@ -29,7 +23,7 @@ type Employee struct {
 // 	return []byte(jsonString), nil
 // }
 
-var employees = []Employee{
+var employees = []entities.Employee{
 	{1, "Gaurav", "LnD", 1001},
 	{2, "Shikhar", "Cloud", 10002},
 	{3, "Mark", "SRE", 2003},
@@ -41,7 +35,7 @@ func EmployeesIndexHandler(w http.ResponseWriter, req *http.Request) {
 }
 
 func EmployeeCreateHandler(w http.ResponseWriter, req *http.Request) {
-	var newEmp Employee
+	var newEmp entities.Employee
 	err := json.NewDecoder(req.Body).Decode(&newEmp)
 
 	if err != nil {
