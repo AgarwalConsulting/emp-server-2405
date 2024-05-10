@@ -10,7 +10,7 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 
-	empRepo "algogrit.com/emp_server/employee/repository"
+	empRepo "algogrit.com/emp_server/employees/repository"
 	"algogrit.com/emp_server/entities"
 )
 
